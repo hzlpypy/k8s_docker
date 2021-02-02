@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gin
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: gin
+  template:
+    metadata:
+      labels:
+        app: gin
+    spec:
+      containers:
+        - name: private-reg-container
+          image: registry.cn-hangzhou.aliyuncs.com/k8s_demo1/k8s_test:1.0.002
+          ports:
+            - containerPort: 8035
+      imagePullSecrets:
+        - name: k8s-test
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-service2
+spec:
+  type: NodePort
+  selector:
+    app: gin
+  ports:
+    - name: gin-web
+      protocol: TCP
+      port: 8035
+      targetPort: 8035
+      nodePort: 30008
